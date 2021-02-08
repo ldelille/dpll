@@ -1,42 +1,15 @@
-# ######################################################################
-#
-# Template pour coder l'algorithme DPLL
-# 
-
-# Une clause disjonctive est simplement une liste de liste d'entiers
-# La négation est codé avec le signe "-"
-# 
-# Par exemple, la formule
-#
-#     x1 /\ (x2 \/ ~x3 \/ x4) /\ ~x5
-#
-# est codée comme [ [1] , [2 , -3 , 4] , [-5] ]
-
-# ######################################################################
-# 
-# Templates
-# 
-
-
+# returns None if the clause is always true, [] if the clause is unsatisfiable.
 def unitPropagateSingle(clause, xb):
-    # Entrées:
-    #  - clause : une liste d'entier (donc: une clause)
-    #  - xb     : un entier (donc un littéral)
-
+    result = clause[:]
     if not clause:
         return None
     if xb not in clause and -xb not in clause:
-        return clause
+        return result
     if xb in clause:
         return None
-    clause.remove(-xb)
-    return clause
+    result.remove(-xb)
+    return result
 
-    # Doit retourner une clause sans xb, ou None si xb rend la clause toujours vrai.
-    # La clause rendue ne doit jamais être vide
-
-
-# print(unitPropagateSingle([1], -1))
 
 def test1():
     assert unitPropagateSingle([1, 2, 3, 4], -1) == [2, 3, 4]
@@ -53,12 +26,8 @@ def test1():
 test1()
 
 
-
-#If a clause is impossible unitPropagate returns an empty list.
+# If a clause is unsatisfiable unitPropagate returns an empty list.
 def unitPropagate(clauses, xb):
-    # Meme chose, mais sur une liste de liste d'entiers
-    # (donc une formule CNF générale)
-    # print("starting unit propagate with arguments: ", clauses,"xb:", xb )
     result = []
     if not clauses:
         return None
@@ -80,14 +49,10 @@ def test_unitPropagate():
     assert unitPropagate([[2], [-2]], -2) == []
 
 
-
 test_unitPropagate()
 
 
 def findPureLits(clauses):
-    # clauses : toujours une formule CNF
-    # Retourne la liste des littéraux qui apparaissent avec une seule
-    # polarité dans la formule
     dic = {}
     for clause in clauses:
         for elem in clause:
@@ -111,20 +76,19 @@ test2()
 
 
 def dpll(clauses):
-    # En entrée : une liste de clauses -- c-a-d une formule CNF
-    if clauses is None:    #found a valid path
+    if clauses is None:  # found a valid path
         return True
-    if len(clauses) == 0:    #if Unit propagate returned [], path was impossible
+    if len(clauses) == 0:  # if unitPropagate returned [], it means we found an unsatisfiable clause
         return False
-    # find unitary clause:
+    # find unitary clauses:
     for clause in clauses:
         if len(clause) == 1:
             return dpll(unitPropagate(clauses, clause[0]))
+    # find pure lit:
     for pure_lit in findPureLits(clauses):
         return dpll(unitPropagate(clauses, pure_lit))
-    for clause in clauses:
-        for elem in clause:
-            return dpll(unitPropagate(clauses, elem)) or dpll(unitPropagate(clauses, -elem))
+    # If above branches did not succeed, try a random boolean value:
+    return dpll(unitPropagate(clauses, clauses[0][0])) or dpll(unitPropagate(clauses, -clauses[0][0]))
 
 
 def test3():
@@ -134,33 +98,22 @@ def test3():
     assert dpll([[1, 2, 3, -4], [-1, 2, -3], [-1, -2, 3], [-1, -2, -3], [4]]) == True
     assert dpll(
         [[1, -2, 3, -4, -6, -8], [2, 3], [2, 3, 4, 5, 8], [2, -4, 5, -6], [2, -3, 6, -8], [2, -4, 6, -7], [-2, -3],
-         [-2, -3, -4], [-2, 3, 4], [-2, -4, 5], [-2, -5, 6], [-7, -8], [7, 8], [-7, 8]]) ==True
+         [-2, -3, -4], [-2, 3, 4], [-2, -4, 5], [-2, -5, 6], [-7, -8], [7, 8], [-7, 8]]) == True
 
 
 test3()
 
 
-#Ma fonction se comporte bein sur ces cas de test, mais renvoie False trop souvent sur les cas du kit....
-
-# ######################################################################
-#
-# Votre fonction passe-t-elle les exemples de
-# http://www.satcompetition.org/ donnés dans le kit ?
-#
-# Pour faire tourner les tests:
-#  - ajuster la valeur de path: les fichiers dans UNSAT sont... unsat
-#    et ceux dans SAT sont... sat.
-#  - Décommentez la ligne "files = ..."
-
+### All tests (above and below) are passing.
 
 from os import listdir
 from os.path import isfile, join
 import random
 
-path = "SATEXsmall/SAT/"  # À AJUSTER AU BESOIN
+path = "SATEX/UNSAT/"  # À AJUSTER AU BESOIN
 
 files = []
-# files = [f for f in listdir(path) if isfile(join(path, f))]
+files = [f for f in listdir(path) if isfile(join(path, f))]
 
 random.shuffle(files)
 
