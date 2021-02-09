@@ -110,7 +110,7 @@ from os import listdir
 from os.path import isfile, join
 import random
 
-path = "SATEX/UNSAT/"  # À AJUSTER AU BESOIN
+path = "SATEX/SAT/"
 
 files = []
 files = [f for f in listdir(path) if isfile(join(path, f))]
