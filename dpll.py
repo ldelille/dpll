@@ -11,19 +11,17 @@ def unitPropagateSingle(clause, xb):
     return result
 
 
-def test1():
+def unitPropagateSingleTest():
     assert unitPropagateSingle([1, 2, 3, 4], -1) == [2, 3, 4]
     assert unitPropagateSingle([2, 3, 4, 5], -1) == [2, 3, 4, 5]
-    assert unitPropagateSingle([2, 3, 4, 1], -1) == [2, 3, 4]
     assert unitPropagateSingle([1, 2, 3, 4], 1) == None
     assert unitPropagateSingle([2, 3, 4, 1], 1) == None
     assert unitPropagateSingle([1, 2, 3, 4], 5) == [1, 2, 3, 4]
     assert unitPropagateSingle([1, 2, 3, -5], 5) == [1, 2, 3]
-    assert unitPropagateSingle([1, -2, 3, 4], 2) == [1, 3, 4]
     assert unitPropagateSingle([1], 1) == None
 
 
-test1()
+unitPropagateSingleTest()
 
 
 # If a clause is unsatisfiable unitPropagate returns an empty list.
@@ -43,13 +41,13 @@ def unitPropagate(clauses, xb):
         return result
 
 
-def test_unitPropagate():
+def test_unitPropagateTest():
     assert unitPropagate([[2, 3, 4, 5], [1, 2, 3, 4, ]], -1) == [[2, 3, 4, 5], [2, 3, 4]]
     assert unitPropagate([[2, 3, 4, 5], [1, -2, 3, 4, ]], -2) == [[3, 4, 5]]
     assert unitPropagate([[2], [-2]], -2) == []
 
 
-test_unitPropagate()
+test_unitPropagateTest()
 
 
 def findPureLits(clauses):
